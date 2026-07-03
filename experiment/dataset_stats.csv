@@ -1,0 +1,4 @@
+Dataset,Raw N,Used N,Train N,Test N,Original features,Encoded features,Governed features,Candidate splits K,Depth,Time limit (s)
+COMPAS,6172,6172,4937,1235,6,3,3,12,3,15
+German Credit,1000,1000,800,200,20,20,5,58,3,15
+Adult Income,32561,5000,4000,1000,14,96,4,109,3,15

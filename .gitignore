@@ -1,0 +1,20 @@
+# Ignore everything
+*
+
+# Allow these paths
+!experiment/
+!experiment/**
+!figures/
+!figures/**
+!.gitignore
+!README.md
+
+# Ignore standard python caches and local files in allowed dirs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/

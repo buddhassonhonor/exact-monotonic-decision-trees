@@ -1,0 +1,7 @@
+Violation Example (CART, Seed 51):
+Applicant A (Worse Profile): Income=0.59, Score=0.81, RepaymentCap=0.23
+  -> Prediction: 1 (APPROVE)
+Applicant B (Better Profile): Income=0.99, Score=0.84, RepaymentCap=0.89
+  -> Prediction: 0 (REJECT)
+
+Conclusion: CART violates monotonicity constraints, rejecting a strictly better candidate.
