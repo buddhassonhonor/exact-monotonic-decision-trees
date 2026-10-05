@@ -1,0 +1,71 @@
+{
+  "config": {
+    "protocol": "full_cohort_v1",
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "test_fraction": 0.2,
+    "validation_fraction_of_outer_train": 0.2,
+    "depth": 3,
+    "solver_limit": 30,
+    "solver_workers": 1,
+    "bootstrap_repeats": 2000,
+    "bootstrap_seed": 123,
+    "audit_pairs": 2000,
+    "compress_rows": true,
+    "constant_hint": true,
+    "feature_set": "same numeric policy features as prior main experiment",
+    "scaling": "fit minima/maxima on fit split; clip transformed evaluation data to [0,1]",
+    "calibration": "isotonic map on independent validation split; reuse same fitted EMDT",
+    "models": [
+      "CART",
+      "ODT",
+      "EMDT",
+      "EMDT-Cell",
+      "EMDT-Iso",
+      "MonoXGB1",
+      "MonoRF",
+      "XGB-Mono",
+      "LGBM-Mono",
+      "LGBM-Adv",
+      "MonoScore"
+    ]
+  },
+  "source_hashes": {
+    "compas_real": "c451db85908b2f7fef1d83203bedf6b71ecda0d5af468d82ae62178f91d0cc7d",
+    "german_real": "b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871",
+    "adult_income": "5b00264637dbfec36bdeaab5676b0b309ff9eb788d63554ca0a249491c86603d",
+    "bank_marketing": "d1513ec63b385506f7cfce9f2c5caa9fe99e7ba4e8c3fa264b3aaf0f849ed32d"
+  },
+  "fingerprint": "9af90cdd92c0a4c9ed1c08dd9b891c6f907f2adc91b1febeb3101e6205142506",
+  "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "D:\\claude-code\\allmath\\learningpaper\\learn13\\.venv\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "numpy": "2.4.3",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "ortools": "9.12.4544",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.2.0",
+    "lightgbm": "4.6.0",
+    "psutil": "7.2.2"
+  },
+  "parallel_jobs": 4,
+  "memory_limit_gb": 28,
+  "selected_environment": "project .venv with installed CPU stack",
+  "note": "Existing project stack retained because solver environments lack OR-Tools/boosting; GPU not used.",
+  "source_code_hashes": {
+    "run_full_cohort.py": "ee67fc9241b19582fc2f7c6279c8cab049309f3d2a8b92ffbdb38fae0c2e7b10",
+    "emdt.py": "be2801ac097a74f00e5dffe4b03d52d0f42ef00ad4d1bc4ecc5fb323ce8c8583"
+  }
+}

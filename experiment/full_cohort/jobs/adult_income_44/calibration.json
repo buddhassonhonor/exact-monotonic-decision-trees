@@ -1,0 +1,13 @@
+{
+  "input_scores": [
+    0,
+    1
+  ],
+  "output_scores": [
+    0.18684895833333334,
+    0.654485049833887
+  ],
+  "validation_rows": 5210,
+  "base_tree": "EMDT",
+  "base_objective_applies_to": "uncalibrated hard labels"
+}

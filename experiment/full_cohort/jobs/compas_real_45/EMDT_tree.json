@@ -1,0 +1,78 @@
+{
+  "structure": {
+    "1": [
+      1,
+      0.9473684210526316
+    ],
+    "2": [
+      0,
+      0.20512820512820512
+    ],
+    "3": [
+      0,
+      0.20512820512820512
+    ],
+    "4": [
+      0,
+      0.07692307692307693
+    ],
+    "5": [
+      1,
+      0.8421052631578947
+    ],
+    "6": [
+      0,
+      0.14102564102564102
+    ],
+    "7": [
+      1,
+      0.9736842105263158
+    ]
+  },
+  "leaves": {
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 1,
+    "12": 1,
+    "13": 1,
+    "14": 1,
+    "15": 1
+  },
+  "features": [
+    "age",
+    "priors_count",
+    "juv_fel_count",
+    "juv_misd_count",
+    "juv_other_count"
+  ],
+  "directions": [
+    1,
+    -1,
+    -1,
+    -1,
+    -1
+  ],
+  "stats": {
+    "status": "OPTIMAL",
+    "time_limit": 30.0,
+    "monotonic": true,
+    "monotonic_encoding": "subtree",
+    "n_cells": 0,
+    "n_raw_training": 3949,
+    "n_training_patterns": 20,
+    "compress_rows": true,
+    "constant_hint": true,
+    "n_monotonic_features": 5,
+    "num_workers": 1,
+    "random_seed": 45,
+    "warm_start_used": false,
+    "warm_start_hinted_splits": 0,
+    "warm_start_hinted_leaves": 0,
+    "wall_time": 0.04734683036804199,
+    "solver_wall_time": 0.0467068,
+    "objective": 1268.0,
+    "best_bound": 1268.0,
+    "relative_gap": 0.0
+  }
+}

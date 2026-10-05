@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "rules": [
+    {
+      "conditions": [
+        "priors_count >= 6"
+      ],
+      "label": 0
+    },
+    {
+      "conditions": [
+        "priors_count < 6",
+        "age <= 35",
+        "priors_count >= 2"
+      ],
+      "label": 0
+    },
+    {
+      "conditions": [
+        "priors_count < 6",
+        "age <= 35",
+        "priors_count < 2"
+      ],
+      "label": 1
+    },
+    {
+      "conditions": [
+        "priors_count < 6",
+        "age > 35"
+      ],
+      "label": 1
+    }
+  ],
+  "note": "Thresholds displayed to 8 significant digits; serialized normalized tree is authoritative."
+}

@@ -1,0 +1,76 @@
+{
+  "structure": {
+    "1": [
+      2,
+      0.0
+    ],
+    "2": [
+      0,
+      0.2191780821917808
+    ],
+    "3": [
+      1,
+      0.5333333333333333
+    ],
+    "4": [
+      3,
+      0.3979591836734694
+    ],
+    "5": [
+      1,
+      0.8
+    ],
+    "6": [
+      3,
+      0.47959183673469385
+    ],
+    "7": [
+      0,
+      0.1232876712328767
+    ]
+  },
+  "leaves": {
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 1,
+    "12": 0,
+    "13": 1,
+    "14": 0,
+    "15": 1
+  },
+  "features": [
+    "age",
+    "education_num",
+    "capital_gain",
+    "hours_per_week"
+  ],
+  "directions": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "stats": {
+    "status": "OPTIMAL",
+    "time_limit": 30.0,
+    "monotonic": false,
+    "monotonic_encoding": "subtree",
+    "n_cells": 0,
+    "n_raw_training": 20838,
+    "n_training_patterns": 159,
+    "compress_rows": true,
+    "constant_hint": true,
+    "n_monotonic_features": 4,
+    "num_workers": 1,
+    "random_seed": 44,
+    "warm_start_used": false,
+    "warm_start_hinted_splits": 0,
+    "warm_start_hinted_leaves": 0,
+    "wall_time": 2.6547133922576904,
+    "solver_wall_time": 2.648095,
+    "objective": 4164.0,
+    "best_bound": 4164.0,
+    "relative_gap": 0.0
+  }
+}

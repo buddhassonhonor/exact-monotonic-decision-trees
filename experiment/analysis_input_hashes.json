@@ -1,0 +1,8 @@
+{
+  "revision_runs.csv": "1cc25dd31a3b648395ea4cf98dc3a4df556b628f4320ed8a2d39943ac71a895f",
+  "synthetic_30seeds_v2_raw.csv": "7f8c59d41e2c904271f68438fa6f08b453cc82f14a2845057e221d1437d44a88",
+  "single_tree_runs.csv": "f39545783c7f83148cf41b269f21e3e031dede081bc14db8cad17904862780ff",
+  "model_class_fits.csv": "671c650fedcef6a8742c6db79fd44655a8d002b4ce46041dd48e8bc4b99a2ae4",
+  "scalability_5reps.csv": "90016c591dc9d80e5395af265f780e5d71eae2bbde145bf5ee48280172bd03db",
+  "depth_ablation_10seeds.csv": "d603f6efb2419ea2f99e6a981ae75e61f974d74720be3d7da5bfbd2aea5e519c"
+}

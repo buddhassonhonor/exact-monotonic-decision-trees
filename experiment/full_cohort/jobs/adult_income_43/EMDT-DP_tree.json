@@ -1,0 +1,66 @@
+{
+  "structure": {
+    "1": [
+      0,
+      0.2191780821917808
+    ],
+    "2": [
+      0,
+      0.1232876712328767
+    ],
+    "4": [
+      0,
+      0.1232876712328767
+    ],
+    "5": [
+      0,
+      0.1232876712328767
+    ],
+    "3": [
+      1,
+      0.8
+    ],
+    "6": [
+      2,
+      0.0
+    ],
+    "7": [
+      0,
+      0.1232876712328767
+    ]
+  },
+  "leaves": {
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 1,
+    "14": 1,
+    "15": 1
+  },
+  "features": [
+    "age",
+    "education_num",
+    "capital_gain",
+    "hours_per_week"
+  ],
+  "directions": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "stats": {
+    "status": "DP-OPTIMAL",
+    "objective": 4226.0,
+    "best_bound": 4226.0,
+    "relative_gap": 0.0,
+    "wall_time": 0.03313260000140872,
+    "n_raw_training": 20838,
+    "n_training_patterns": 158,
+    "states": 1118,
+    "cached_regions": 939,
+    "fully_governed": true
+  }
+}

@@ -1,0 +1,5 @@
+Dataset,UsedN,TrainN,TestN,Features,Governed,Kmin,Kmax,FeatureNames
+compas_real,500,400,100,5,5,16,18,age;priors_good;juv_fel_good;juv_misd_good;juv_other_good
+german_real,500,400,100,5,5,18,18,duration_good;amount_good;installment_good;residence;age
+adult_income,500,400,100,4,4,16,16,age;education_num;capital_gain;hours_per_week
+bank_marketing,500,400,100,4,4,16,16,balance;duration;campaign_good;previous

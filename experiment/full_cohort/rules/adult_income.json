@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "rules": [
+    {
+      "conditions": [
+        "age <= 33"
+      ],
+      "label": 0
+    },
+    {
+      "conditions": [
+        "age > 33",
+        "education_num <= 13",
+        "capital_gain <= 0"
+      ],
+      "label": 0
+    },
+    {
+      "conditions": [
+        "age > 33",
+        "education_num <= 13",
+        "capital_gain > 0"
+      ],
+      "label": 1
+    },
+    {
+      "conditions": [
+        "age > 33",
+        "education_num > 13"
+      ],
+      "label": 1
+    }
+  ],
+  "note": "Thresholds displayed to 8 significant digits; serialized normalized tree is authoritative."
+}

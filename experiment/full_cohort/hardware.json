@@ -1,0 +1,11 @@
+{
+  "GPU": [
+    "OrayIddDriver Device",
+    "Todesk Virtual Display Adapter",
+    "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "Intel(R) Graphics"
+  ],
+  "CPU": "Intel(R) Core(TM) Ultra 9 275HX",
+  "RAMBytes": 33737986048,
+  "LogicalProcessors": 24
+}

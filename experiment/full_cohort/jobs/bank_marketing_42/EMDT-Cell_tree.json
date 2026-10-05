@@ -1,0 +1,76 @@
+{
+  "structure": {
+    "1": [
+      0,
+      0.09006591251611498
+    ],
+    "2": [
+      1,
+      0.07442049613664091
+    ],
+    "3": [
+      3,
+      0.0
+    ],
+    "4": [
+      2,
+      0.9838709677419355
+    ],
+    "5": [
+      1,
+      0.07442049613664091
+    ],
+    "6": [
+      3,
+      0.0
+    ],
+    "7": [
+      1,
+      0.07442049613664091
+    ]
+  },
+  "leaves": {
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 1
+  },
+  "features": [
+    "balance",
+    "duration",
+    "campaign",
+    "previous"
+  ],
+  "directions": [
+    1,
+    1,
+    -1,
+    1
+  ],
+  "stats": {
+    "status": "OPTIMAL",
+    "time_limit": 30.0,
+    "monotonic": true,
+    "monotonic_encoding": "cells",
+    "n_cells": 150,
+    "n_raw_training": 28934,
+    "n_training_patterns": 150,
+    "compress_rows": true,
+    "constant_hint": true,
+    "n_monotonic_features": 4,
+    "num_workers": 1,
+    "random_seed": 42,
+    "warm_start_used": false,
+    "warm_start_hinted_splits": 0,
+    "warm_start_hinted_leaves": 0,
+    "wall_time": 0.6381814479827881,
+    "solver_wall_time": 0.626322,
+    "objective": 3359.0,
+    "best_bound": 3359.0,
+    "relative_gap": 0.0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "domain": "All Boolean profiles",
+  "features": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "depth": "equal to feature count",
+  "monotone_generation": "Recursive ordered cofactors, exhaustive",
+  "structural_generation": "Recursive AND/OR chain with one constant root branch",
+  "solver_independent": true,
+  "elapsed_seconds": 0.006432700000004843
+}

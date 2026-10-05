@@ -254,7 +254,9 @@ class MonotoneCalibratedModel:
 
     def fit(self, X, y):
         y = np.asarray(y, dtype=float)
-        self.base_model.fit(X, y.astype(int))
+        if self.base_model.fit(X, y.astype(int)) is False:
+            self.fit_stats_ = dict(self.base_model.fit_stats_)
+            return False
         train_score = safe_predict_score(self.base_model, X)
         if np.allclose(train_score, train_score[0]):
             self.constant_prob_ = float(np.mean(y))
@@ -451,8 +453,17 @@ def build_models(n_features, seed, emdt_time_limit=EMDT_TIME_LIMIT, include_best
 
 def evaluate_model(model, X_train, y_train, X_test, y_test, n_dim, seed):
     t0 = time.time()
-    model.fit(X_train, y_train)
+    fitted = model.fit(X_train, y_train)
     fit_time = time.time() - t0
+
+    if fitted is False:
+        stats = getattr(model, 'fit_stats_', {})
+        row = {k: np.nan for k in ['Accuracy', 'Brier', 'ECE', 'FPR', 'FNR', 'Cost',
+               'violations', 'viol_rate', 'viol_severity_mean', 'viol_severity_cond',
+               'viol_severity_max', 'Objective', 'BestBound', 'RelativeGap']}
+        row.update(Time=float(fit_time), SolverStatus=stats.get('status', 'UNKNOWN'),
+                   SolverWallTime=stats.get('solver_wall_time', np.nan))
+        return row
 
     y_prob = safe_predict_score(model, X_test)
     y_pred = (y_prob >= 0.5).astype(int)

@@ -1,6 +1,8 @@
 import numpy as np
 from ortools.sat.python import cp_model
 import time
+from itertools import product
+from math import prod
 
 class ExactMonotonicTree:
     def __init__(
@@ -12,6 +14,10 @@ class ExactMonotonicTree:
         num_workers=1,
         random_seed=42,
         warm_start_solution=None,
+        monotonic_encoding='subtree',
+        max_cells=4096,
+        compress_rows=False,
+        constant_hint=False,
     ):
         self.max_depth = max_depth
         self.time_limit = time_limit
@@ -20,6 +26,12 @@ class ExactMonotonicTree:
         self.num_workers = num_workers
         self.random_seed = random_seed
         self.warm_start_solution = warm_start_solution
+        if monotonic_encoding not in {'subtree', 'cells'}:
+            raise ValueError('monotonic_encoding must be subtree or cells')
+        self.monotonic_encoding = monotonic_encoding
+        self.max_cells = int(max_cells)
+        self.compress_rows = bool(compress_rows)
+        self.constant_hint = bool(constant_hint)
         self.model = None
         self.solver = None
         self.solution_ = None
@@ -37,6 +49,17 @@ class ExactMonotonicTree:
         Assumes X is normalized or we use pre-computed splits.
         For simplicity in this research prototype, we binarize X based on quantiles.
         """
+        X = np.asarray(X, dtype=float)
+        y = np.asarray(y)
+        if X.ndim != 2 or len(y) != len(X) or not np.all(np.isin(y, [0, 1])):
+            raise ValueError('Expected a feature matrix and binary labels')
+        if not np.isfinite(X).all() or self.max_depth < 1:
+            raise ValueError('Finite features and depth >= 1 are required')
+        if self.monotonic_features is not None and any(
+                int(j) != j or not 0 <= int(j) < X.shape[1] for j in self.monotonic_features):
+            raise ValueError('Governed feature indices are outside the feature matrix')
+        y = y.astype(int)
+        self.solution_ = None
         # 1. Preprocessing: Binarize features to simplify SAT encoding
         # We generate candidate splits (feature, threshold)
         self.n_samples, self.n_features = X.shape
@@ -57,9 +80,38 @@ class ExactMonotonicTree:
         
         # Compute binary feature matrix B where B[i, k] = 1 if X[i, f_k] > t_k
         self.n_splits = len(self.splits)
-        self.B = np.zeros((self.n_samples, self.n_splits), dtype=int)
+        if not self.n_splits:
+            raise ValueError('At least one nonconstant feature is required')
+        raw_n = self.n_samples
+        class_counts = np.column_stack([1-y, y])
+        if self.compress_rows:
+            raw_B = np.column_stack([(X[:, f] > t) for f, t in self.splits])
+            _, first, inverse = np.unique(raw_B, axis=0, return_index=True, return_inverse=True)
+            class_counts = np.zeros((len(first), 2), dtype=int)
+            np.add.at(class_counts, (inverse, y), 1)
+            X = X[first]
+            y = y[first]
+            self.n_samples = len(first)
+        self.class_counts_ = class_counts
+        self.training_points_ = X
+        routing_X = X
+        self.cell_points_ = None
+        if self.monotonic and self.monotonic_encoding == 'cells':
+            if np.any(X < 0) or np.any(X > 1):
+                raise ValueError('Cell encoding requires features in [0, 1]')
+            axes = [sorted({float(t) for f, t in self.splits if f == j} | {1.0})
+                    for j in range(self.n_features)]
+            shape = tuple(len(axis) for axis in axes)
+            n_cells = prod(shape)
+            if n_cells > self.max_cells:
+                raise ValueError(f'{n_cells} cells exceed max_cells={self.max_cells}')
+            self.cell_points_ = np.asarray(list(product(*axes)), dtype=float)
+            self.cell_shape_ = shape
+            routing_X = np.vstack([X, self.cell_points_])
+        n_routing = len(routing_X)
+        self.B = np.zeros((n_routing, self.n_splits), dtype=int)
         for k, (f, t) in enumerate(self.splits):
-            self.B[:, k] = (X[:, f] > t).astype(int)
+            self.B[:, k] = (routing_X[:, f] > t).astype(int)
             
         # 2. Build CP-SAT Model
         model = cp_model.CpModel()
@@ -87,7 +139,7 @@ class ExactMonotonicTree:
             
         # z[i, l]: Sample i falls into leaf l
         z = {}
-        for i in range(self.n_samples):
+        for i in range(n_routing):
             for l in range(n_internal + 1, total_nodes + 1):
                 z[i, l] = model.NewBoolVar(f'z_{i}_{l}')
             # Each sample in exactly one leaf
@@ -95,7 +147,7 @@ class ExactMonotonicTree:
             
         # Path Constraints
         # For each sample i and leaf l, if z[i, l] is true, then splits must match B
-        for i in range(self.n_samples):
+        for i in range(n_routing):
             for l in range(n_internal + 1, total_nodes + 1):
                 # Trace path from root to l
                 curr = l
@@ -133,8 +185,9 @@ class ExactMonotonicTree:
         # If y[i] = 0, we want sum(z[i, l] * c[l]) = 0.
         
         errors = []
-        for i in range(self.n_samples):
-            is_correct = model.NewBoolVar(f'correct_{i}')
+        predictions = []
+        product_vars = {}
+        for i in range(n_routing):
             # predicted_val = sum(z[i, l] AND c[l])
             # But z[i, l] and c[l] are bools.
             # Let p_i be the prediction for sample i.
@@ -159,16 +212,17 @@ class ExactMonotonicTree:
             leaf_preds = []
             for l in range(n_internal + 1, total_nodes + 1):
                 lp = model.NewBoolVar(f'lp_{i}_{l}')
+                product_vars[i, l] = lp
                 model.AddBoolAnd([z[i, l], c[l]]).OnlyEnforceIf(lp)
                 model.AddBoolOr([z[i, l].Not(), c[l].Not()]).OnlyEnforceIf(lp.Not())
                 leaf_preds.append(lp)
             
             model.Add(p_i == sum(leaf_preds))
+            predictions.append(p_i)
             
-            if y[i] == 1:
-                errors.append(p_i.Not())
-            else:
-                errors.append(p_i)
+            if i >= self.n_samples:
+                continue
+            errors.append(int(class_counts[i, 0])*p_i + int(class_counts[i, 1])*(1-p_i))
                 
         model.Minimize(sum(errors))
         
@@ -188,7 +242,7 @@ class ExactMonotonicTree:
             
             # Implementation of Local Monotonicity:
             # For each internal node n, enforce that all left leaves <= all right leaves
-            for n in range(1, n_internal + 1):
+            for n in range(1, n_internal + 1) if self.monotonic_encoding == 'subtree' else []:
                 l_leaves = get_leaves(2*n)
                 r_leaves = get_leaves(2*n + 1)
                 if not mono_split_idx:
@@ -199,6 +253,16 @@ class ExactMonotonicTree:
                     for lr in r_leaves:
                         # Enforce ordering only when node n selects a monotonic feature.
                         model.Add(c[ll] <= c[lr] + 1 - mono_active)
+
+            if self.monotonic_encoding == 'cells':
+                for index in np.ndindex(self.cell_shape_):
+                    q = self.n_samples + int(np.ravel_multi_index(index, self.cell_shape_))
+                    for j in mono_features:
+                        if index[j] + 1 < self.cell_shape_[j]:
+                            upper = list(index)
+                            upper[j] += 1
+                            r = self.n_samples + int(np.ravel_multi_index(tuple(upper), self.cell_shape_))
+                            model.Add(predictions[q] <= predictions[r])
 
         # Optional warm-start hints from a prior tree solution.
         hinted_splits = 0
@@ -231,6 +295,26 @@ class ExactMonotonicTree:
                 model.AddHint(c[leaf_id], int(val))
                 hinted_leaves += 1
 
+        # A full feasible constant-tree hint uses training labels only and costs no solve.
+        if self.constant_hint and self.warm_start_solution is None:
+            constant = int(class_counts[:, 1].sum() >= class_counts[:, 0].sum())
+            for n in range(1, n_internal + 1):
+                for k in range(self.n_splits):
+                    model.AddHint(a[n, k], int(k == 0))
+            for leaf_id in c:
+                model.AddHint(c[leaf_id], constant)
+            for i in range(n_routing):
+                node = 1
+                while node <= n_internal:
+                    node = 2*node + int(self.B[i, 0])
+                for leaf_id in c:
+                    selected = int(leaf_id == node)
+                    model.AddHint(z[i, leaf_id], selected)
+                    model.AddHint(product_vars[i, leaf_id], selected * constant)
+                model.AddHint(predictions[i], constant)
+            # This bound is valid for both encoded classes and does not remove an optimum.
+            model.Add(sum(errors) <= int(min(class_counts[:, 0].sum(), class_counts[:, 1].sum())))
+
         # Solve
         solve_start = time.time()
         solver = cp_model.CpSolver()
@@ -246,6 +330,12 @@ class ExactMonotonicTree:
             'status': status_name,
             'time_limit': float(self.time_limit),
             'monotonic': bool(self.monotonic),
+            'monotonic_encoding': self.monotonic_encoding,
+            'n_cells': 0 if self.cell_points_ is None else len(self.cell_points_),
+            'n_raw_training': raw_n,
+            'n_training_patterns': self.n_samples,
+            'compress_rows': self.compress_rows,
+            'constant_hint': self.constant_hint,
             'n_monotonic_features': int(self.n_features if self.monotonic_features is None else len(self.monotonic_features)),
             'num_workers': int(self.num_workers),
             'random_seed': int(self.random_seed),
@@ -279,6 +369,9 @@ class ExactMonotonicTree:
             self.solution_['leaves'] = {}
             for l in range(n_internal + 1, total_nodes + 1):
                 self.solution_['leaves'][l] = solver.Value(c[l])
+            self.routing_predictions_ = np.array([solver.Value(p) for p in predictions])
+            self.model = model
+            self.solver = solver
                 
             return True
         else:
@@ -291,7 +384,7 @@ class ExactMonotonicTree:
 
     def predict(self, X):
         if not self.solution_:
-            return np.zeros(len(X))
+            raise RuntimeError('No feasible tree is available; inspect fit_stats_')
             
         preds = []
         n_internal = (1 << self.max_depth) - 1

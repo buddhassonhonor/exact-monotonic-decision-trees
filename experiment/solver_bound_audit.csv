@@ -1,0 +1,9 @@
+Dataset,Method,Optimal,Feasible,RawGap,ClippedGap
+adult_income,EMDT,10,0,0.0,0.0
+adult_income,ODT,10,0,0.0,0.0
+bank_marketing,EMDT,10,0,0.0,0.0
+bank_marketing,ODT,10,0,0.0,0.0
+compas_real,EMDT,10,0,0.0,0.0
+compas_real,ODT,10,0,0.0,0.0
+german_real,EMDT,0,10,1.0337959011215487,0.9511860484337549
+german_real,ODT,0,10,1.0160309139226444,0.9558981010901615
